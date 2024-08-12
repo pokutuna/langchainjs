@@ -11,12 +11,15 @@ const BASE_TYPEDOC_CONFIG = {
     "required-first",
     "alphabetical",
   ],
-  plugin: ["./typedoc_plugins/hide_underscore_lc.js"],
+  plugin: [
+    "./typedoc_plugins/hide_underscore_lc.js",
+    "typedoc-plugin-expand-object-like-types",
+  ],
   tsconfig: "../../tsconfig.json",
   readme: "none",
   excludePrivate: true,
   excludeInternal: true,
-  excludeExternals: true,
+  excludeExternals: false,
   excludeNotDocumented: false,
   includeVersion: true,
   sourceLinkTemplate:
@@ -25,6 +28,7 @@ const BASE_TYPEDOC_CONFIG = {
   name: "LangChain.js",
   skipErrorChecking: true,
   exclude: ["dist"],
+  hostedBaseUrl: "https://v02.api.js.langchain.com/",
 };
 
 /**
@@ -42,7 +46,8 @@ async function main() {
   const workspaces = fs
     .readdirSync("../../libs/")
     .filter((dir) => dir.startsWith("langchain-"))
-    .map((dir) => path.join("../../libs/", dir, "/langchain.config.js"));
+    .map((dir) => path.join("../../libs/", dir, "/langchain.config.js"))
+    .filter((configPath) => fs.existsSync(configPath));
   const configFiles = [
     "../../langchain/langchain.config.js",
     "../../langchain-core/langchain.config.js",

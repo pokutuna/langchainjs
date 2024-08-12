@@ -7,14 +7,18 @@ const llamaPath = getEnvironmentVariable("LLAMA_PATH")!;
 
 test.skip("Test Llama_CPP", async () => {
   const model = new LlamaCpp({ modelPath: llamaPath });
+  // @eslint-disable-next-line/@typescript-eslint/ban-ts-comment
+  // @ts-expect-error unused var
   const res = await model.invoke("Where do Llamas live?");
-  console.log(res);
+  // console.log(res);
 }, 100000);
 
 test.skip("Test Llama_CPP", async () => {
   const model = new LlamaCpp({ modelPath: llamaPath });
+  // @eslint-disable-next-line/@typescript-eslint/ban-ts-comment
+  // @ts-expect-error unused var
   const res = await model.invoke("Where do Pandas live?");
-  console.log(res);
+  // console.log(res);
 }, 100000);
 
 test.skip("Test Llama_CPP", async () => {
@@ -45,3 +49,42 @@ test.skip("Test Llama_CPP", async () => {
 
   expect(chunks.length).toBeGreaterThan(1);
 });
+
+// gbnf grammer test
+const gbnfListGrammer =
+  'root ::= item+ # Excludes various line break characters item ::= "- " [^\r\n\x0b\x0c\x85\u2028\u2029]+ "\n"';
+
+test.skip("Test Llama_CPP", async () => {
+  const model = new LlamaCpp({ modelPath: llamaPath, gbnf: gbnfListGrammer });
+  // @eslint-disable-next-line/@typescript-eslint/ban-ts-comment
+  // @ts-expect-error unused var
+  const res = await model.invoke(
+    "Can you give me a list of 3 cute llama names?"
+  );
+  // console.log(res);
+}, 100000);
+
+// JSON schema test
+
+const schemaJSON = {
+  type: "object",
+  properties: {
+    responseMessage: {
+      type: "string",
+    },
+    responseMetaData: {
+      type: "string",
+    },
+    requestPositivityScoreFromOneToTen: {
+      type: "number",
+    },
+  },
+};
+
+test.skip("Test Llama_CPP", async () => {
+  const model = new LlamaCpp({ modelPath: llamaPath, jsonSchema: schemaJSON });
+  // @eslint-disable-next-line/@typescript-eslint/ban-ts-comment
+  // @ts-expect-error unused var
+  const res = await model.invoke("Where do llamas live?");
+  // console.log(res);
+}, 100000);

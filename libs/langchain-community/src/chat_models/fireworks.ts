@@ -1,4 +1,7 @@
-import type { BaseChatModelParams } from "@langchain/core/language_models/chat_models";
+import type {
+  BaseChatModelParams,
+  LangSmithParams,
+} from "@langchain/core/language_models/chat_models";
 import {
   type OpenAIClient,
   type ChatOpenAICallOptions,
@@ -90,15 +93,25 @@ export class ChatFireworks extends ChatOpenAI<ChatFireworksCallOptions> {
 
     super({
       ...fields,
-      model: fields?.model || "accounts/fireworks/models/llama-v2-13b-chat",
+      model:
+        fields?.model ||
+        fields?.modelName ||
+        "accounts/fireworks/models/llama-v3p1-8b-instruct",
       apiKey: fireworksApiKey,
       configuration: {
         baseURL: "https://api.fireworks.ai/inference/v1",
       },
+      streamUsage: false,
     });
 
     this.fireworksApiKey = fireworksApiKey;
     this.apiKey = fireworksApiKey;
+  }
+
+  getLsParams(options: this["ParsedCallOptions"]): LangSmithParams {
+    const params = super.getLsParams(options);
+    params.ls_provider = "fireworks";
+    return params;
   }
 
   toJSON() {

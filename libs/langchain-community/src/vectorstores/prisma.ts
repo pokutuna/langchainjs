@@ -61,6 +61,7 @@ export type PrismaSqlFilter<TModel extends Record<string, unknown>> = {
   [K in keyof TModel]?: {
     equals?: TModel[K];
     in?: TModel[K][];
+    notIn?: TModel[K][];
     isNull?: TModel[K];
     isNotNull?: TModel[K];
     like?: TModel[K];
@@ -75,6 +76,7 @@ export type PrismaSqlFilter<TModel extends Record<string, unknown>> = {
 const OpMap = {
   equals: "=",
   in: "IN",
+  notIn: "NOT IN",
   isNull: "IS NULL",
   isNotNull: "IS NOT NULL",
   like: "LIKE",
@@ -423,13 +425,11 @@ export class PrismaVectorStore<
           const opRaw = this.Prisma.raw(OpMap[opNameKey]);
 
           switch (OpMap[opNameKey]) {
+            case OpMap.notIn:
             case OpMap.in: {
-              if (
-                !Array.isArray(value) ||
-                !value.every((v) => typeof v === "string")
-              ) {
+              if (!Array.isArray(value)) {
                 throw new Error(
-                  `Invalid filter: IN operator requires an array of strings. Received: ${JSON.stringify(
+                  `Invalid filter: IN operator requires an array. Received: ${JSON.stringify(
                     value,
                     null,
                     2
